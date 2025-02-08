@@ -5,8 +5,11 @@
  */
 
 const { describe, it } = require('mocha')
-require('chai').use(require('chai-as-promised'))
-const { expect } = require('chai')
+const chai = require('../chai-wrapper.js');
+chai.then(loadedChai => { global.expect = loadedChai.expect; global.assert = loadedChai.assert; });
+
+
+
 const { stub } = require('sinon')
 const Run = require('../env/run')
 const { TimeoutError, RequestError } = Run.errors
@@ -42,7 +45,7 @@ describe('request', () => {
 
     // ------------------------------------------------------------------------
 
-    it('get returns buffer', async function () {
+    it('get returns buffer', async function() {
       this.timeout(timeout)
       const txid = '5332c013476cd2a2c18710a01188695bc27a5ef1748a51d4a5910feb1111dab4'
       // const rawtx = await request(`https://api.run.network/v1/main/rawtx/${txid}`, { timeout })
@@ -53,7 +56,7 @@ describe('request', () => {
 
     // ------------------------------------------------------------------------
 
-    it('posts json', async function () {
+    it('posts json', async function() {
       this.timeout(timeout)
       const options = { method: 'POST', body: 'hello', timeout }
       const response = await request('https://httpbin.org/post', options)
@@ -62,28 +65,28 @@ describe('request', () => {
 
     // ------------------------------------------------------------------------
 
-    it('timeout', async function () {
+    it('timeout', async function() {
       this.timeout(timeout)
       await expect(request('https://www.google.com:81', { timeout: 100 })).to.be.rejectedWith(TimeoutError)
     })
 
     // ------------------------------------------------------------------------
 
-    it('client error', async function () {
+    it('client error', async function() {
       this.timeout(timeout)
       await expect(request('123', { timeout })).to.be.rejected
     })
 
     // ------------------------------------------------------------------------
 
-    it('server error', async function () {
+    it('server error', async function() {
       this.timeout(timeout)
       await expect(request('https://api.whatsonchain.com/v1/badurl', { timeout })).to.be.rejectedWith(RequestError)
     })
 
     // ------------------------------------------------------------------------
 
-    it('custom headers', async function () {
+    it('custom headers', async function() {
       this.timeout(timeout)
       const headers = { Date: (new Date()).toUTCString() }
       const response = await request('https://httpbin.org/get', { timeout, headers })
@@ -92,7 +95,7 @@ describe('request', () => {
 
     // ------------------------------------------------------------------------
 
-    it('custom content-type', async function () {
+    it('custom content-type', async function() {
       this.timeout(timeout)
       const headers = { 'content-type': 'application/text' }
       const options = { method: 'POST', body: 'hello', headers, timeout }
@@ -103,7 +106,7 @@ describe('request', () => {
 
     // ------------------------------------------------------------------------
 
-    it('response handler', async function () {
+    it('response handler', async function() {
       this.timeout(timeout)
       const options = { timeout, cache: 1000, response: stub().returns(100) }
       // expect(await request('https://api.run.network/v1/test/status', options)).to.equal(100)

@@ -6,7 +6,10 @@
 
 const bsv = require('bsv')
 const { describe, it } = require('mocha')
-const { expect } = require('chai')
+const chai = require('../chai-wrapper.js');
+chai.then(loadedChai => { global.expect = loadedChai.expect; global.assert = loadedChai.assert; });
+
+
 const Run = require('../env/run')
 const unmangle = require('../env/unmangle')
 const { _check } = unmangle(unmangle(Run)._environment)
@@ -78,7 +81,7 @@ describe('_check', () => {
 
     // ----------------------------------------------------------------------
 
-    it('node 10-16 supported', () => {
+    it('node 10-18 supported', () => {
       testNodeVersion('v10.15.3')
       testNodeVersion('v11.15.0')
       testNodeVersion('v12.3.1')
@@ -86,13 +89,15 @@ describe('_check', () => {
       testNodeVersion('v14.15.1')
       testNodeVersion('v15.3.0')
       testNodeVersion('v16.1.0')
+      testNodeVersion('v18.20.6')
+      testNodeVersion('v20.18.2')
     })
 
     // ----------------------------------------------------------------------
 
-    it('node > 16 not supported', () => {
-      const error = 'Run is supported only on Node 16 and below, check https://bit.ly/lowernode'
-      expect(() => testNodeVersion('v17.0.0')).to.throw(error)
+    it('node > 18 not supported', () => {
+      const error = 'Run is supported only on Node 20 and below, check https://bit.ly/lowernode'
+      expect(() => testNodeVersion('v21.0.0')).to.throw(error)
     })
 
     // ----------------------------------------------------------------------
