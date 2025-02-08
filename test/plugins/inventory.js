@@ -5,9 +5,12 @@
  */
 
 const { describe, it, afterEach } = require('mocha')
-require('chai').use(require('chai-as-promised'))
+const chai = require('../chai-wrapper.js');
+chai.then(loadedChai => { global.expect = loadedChai.expect; global.assert = loadedChai.assert; });
+
+
 const { payFor } = require('../env/misc')
-const { expect } = require('chai')
+
 const { stub } = require('sinon')
 const { PrivateKey, Transaction } = require('bsv')
 const Run = require('../env/run')

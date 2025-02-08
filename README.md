@@ -1,4 +1,4 @@
-# RUN SDK - 0.6.42 beta
+# RUN SDK - 0.6.43 beta
 
 [![tests](https://github.com/runcraft-bitcoin/run-sdk/workflows/tests/badge.svg)](https://github.com/runcraft-bitcoin/run-sdk/actions) [![codecov](https://codecov.io/gh/runcraft-bitcoin/run-sdk/branch/master/graph/badge.svg?token=VPXTBV9CQP)](https://codecov.io/gh/runcraft-bitcoin/run-sdk/)
 
@@ -11,6 +11,12 @@ To give it a go, visit https://wiki.runcraft.io/ for tutorials and docs.
 
 ## Versions and migrations
 
+### version 0.6.43b
+
+- upgrade most of dependencies
+- upgrade to chai 5.1.2 by using a wrapper (chai went full esm after v5)
+- upgrade to node v20
+
 ### version 0.6.42
 
 - removes support for Run Connect API which was configured as default and got deprecated. It was replaced with the whatsonchain API as default, be aware that they have rate limits.
@@ -20,7 +26,7 @@ To give it a go, visit https://wiki.runcraft.io/ for tutorials and docs.
 ## Installation
 
 We recommend using `nvm` to have the proper node version. Run-SDK requires Node 16 or higher.
-Check with `node --version`, and for example switch with `nvm install 16 && nvm use 16`.
+Check with `node --version`, and for example switch with `nvm use 16.20.2`.
 
 Run `npm install` to install node dependencies.
 

@@ -1,3 +1,6 @@
+const chai = require('../chai-wrapper.js');
+chai.then(loadedChai => { global.expect = loadedChai.expect; global.assert = loadedChai.assert; });
+
 /**
  * misc.js
  *
@@ -9,7 +12,7 @@ const fs = require('fs')
 const path = require('path')
 const Run = require('./run')
 const unmangle = require('./unmangle')
-const { expect } = require('chai')
+
 const { Mockchain } = Run.plugins
 
 // ------------------------------------------------------------------------------------------------
