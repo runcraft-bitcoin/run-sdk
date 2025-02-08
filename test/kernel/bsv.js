@@ -8,7 +8,10 @@ const bsv = require('bsv')
 const Run = require('../env/run')
 const unmangle = require('../env/unmangle')
 const { describe, it } = require('mocha')
-const { expect } = require('chai')
+const chai = require('../chai-wrapper.js');
+chai.then(loadedChai => { global.expect = loadedChai.expect; global.assert = loadedChai.assert; });
+
+
 const { _calculateDust, _scripthash } = unmangle(unmangle(Run)._bsv)
 
 // ------------------------------------------------------------------------------------------------

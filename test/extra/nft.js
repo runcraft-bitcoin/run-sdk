@@ -5,8 +5,11 @@
  */
 
 const { describe, it, beforeEach, afterEach } = require('mocha')
-require('chai').use(require('chai-as-promised'))
-const { assert, expect } = require('chai')
+const chai = require('../chai-wrapper.js');
+chai.then(loadedChai => { global.expect = loadedChai.expect; global.assert = loadedChai.assert; });
+
+
+
 const { PrivateKey } = require('bsv')
 const Run = require('../env/run')
 const { COVER } = require('../env/config')

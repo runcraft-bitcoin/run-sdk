@@ -5,8 +5,11 @@
  */
 
 const { describe, it } = require('mocha')
-const { expect } = require('chai')
-require('chai').use(require('chai-as-promised'))
+const chai = require('../chai-wrapper.js');
+chai.then(loadedChai => { global.expect = loadedChai.expect; global.assert = loadedChai.assert; });
+
+
+
 const Run = require('../env/run')
 const { RunConnect, BlockchainWrapper } = Run.plugins
 

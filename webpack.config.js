@@ -225,7 +225,7 @@ const browserTests = {
   entry: entries,
   output: { filename: `${name}.${pkg.version}.browser.tests.js`, path: dist },
   node: { fs: 'empty' },
-  externals: { mocha: 'mocha.Mocha', chai: 'chai', jsdom: 'jsdom', bsv: 'bsv', target: library },
+  externals: { mocha: 'mocha.Mocha', chai: 'chai', jsdom: 'jsdom', bsv: 'bsv', chai: "chai", "chai-as-promised": "chai-as-promised", target: library },
   optimization: { minimize: false },
   plugins: [new WaitForNameCachePlugin(), new webpack.EnvironmentPlugin(process.env), browserVariant],
   stats: 'errors-only'

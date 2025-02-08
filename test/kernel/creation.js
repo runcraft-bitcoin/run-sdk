@@ -5,10 +5,13 @@
  */
 
 const { describe, it } = require('mocha')
+const chai = require('../chai-wrapper.js');
+chai.then(loadedChai => { global.expect = loadedChai.expect; global.assert = loadedChai.assert; });
+
 const Run = require('../env/run')
 const { expectTx } = require('../env/misc')
-require('chai').use(require('chai-as-promised'))
-const { expect } = require('chai')
+
+
 const LocalCache = require('../../lib/plugins/local-cache')
 const { Jig, Berry, Creation } = Run
 
