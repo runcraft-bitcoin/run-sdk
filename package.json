@@ -1,6 +1,6 @@
 {
   "name": "@runonbitcoin/run",
-  "version": "0.6.43",
+  "version": "0.6.44",
   "description": "Run SDK",
   "license": "MIT",
   "main": "dist/run.node.min.js",
@@ -11,7 +11,7 @@
   "repository": "git://github.com/runcraft-bitcoin/run-sdk.git",
   "scripts": {
     "lint": "standard --fix",
-    "build": "webpack",
+    "build": "rm -rf dist/*.js && rm -rf .runcache && webpack",
     "test": "env LIB=lib mocha",
     "test:cover": "env LIB=lib env COVER=1 nyc --clean=${CLEAN:=true} -r=text -r=lcovonly -x=test/** mocha",
     "test:node": "webpack && env LIB=dist/run.node.min.js env MANGLED=1 mocha",

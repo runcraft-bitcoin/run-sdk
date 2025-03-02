@@ -83,7 +83,7 @@ if (!fs.existsSync(nameCachePath)) {
 
 // Plugin to save the name cache if it differs from the last known name cache
 class SaveNameCachePlugin {
-  apply (compiler) {
+  apply(compiler) {
     compiler.hooks.done.tap(SaveNameCachePlugin.name, () => {
       const newNameCacheJson = JSON.stringify(nameCache)
       if (newNameCacheJson !== lastNameCacheJson) {
@@ -96,7 +96,7 @@ class SaveNameCachePlugin {
 
 // Plugin to wait for the name cache file to be saved
 class WaitForNameCachePlugin {
-  apply (compiler) {
+  apply(compiler) {
     compiler.hooks.run.tapAsync(WaitForNameCachePlugin.name, async (compiler, callback) => {
       const start = new Date()
       const timeout = 30000
@@ -140,7 +140,7 @@ const terserPluginConfig = {
 const browserMin = {
   entry,
   output: {
-    filename: `${name}.${pkg.version}.browser.min.js`,
+    filename: `${name}.browser.min.js`,
     path: dist,
     library,
     libraryTarget: 'umd'
@@ -169,7 +169,7 @@ const nodeMin = {
   ...browserMin,
   target: 'node',
   output: {
-    filename: `${name}.${pkg.version}.node.min.js`,
+    filename: `${name}.node.min.js`,
     path: dist,
     libraryTarget: 'commonjs2'
   },
@@ -187,7 +187,7 @@ const nodeMin = {
 const browser = {
   ...browserMin,
   output: {
-    filename: `${name}.${pkg.version}.browser.js`,
+    filename: `${name}.browser.js`,
     path: dist,
     library
   },
@@ -202,7 +202,7 @@ const browser = {
 const node = {
   ...nodeMin,
   output: {
-    filename: `${name}.${pkg.version}.node.js`,
+    filename: `${name}.node.js`,
     path: dist,
     libraryTarget: 'commonjs2'
   },
@@ -223,7 +223,7 @@ if (!entries.length) throw new Error(`No test files found: ${patterns}`)
 const browserTests = {
   target: 'web',
   entry: entries,
-  output: { filename: `${name}.${pkg.version}.browser.tests.js`, path: dist },
+  output: { filename: `${name}.browser.tests.js`, path: dist },
   node: { fs: 'empty' },
   externals: { mocha: 'mocha.Mocha', chai: 'chai', jsdom: 'jsdom', bsv: 'bsv', target: library },
   optimization: { minimize: false },
@@ -232,5 +232,53 @@ const browserTests = {
 }
 
 // ------------------------------------------------------------------------------------------------
+// Create a version of the sdk with the version in filenames for more convenient exports
+// ------------------------------------------------------------------------------------------------
 
-module.exports = [browserMin, nodeMin, browser, node, browserTests]
+const retryAfterSeconds = 5
+const copyPatterns = [
+  { from: `dist/run.browser.min.js`, to: `dist/run.${pkg.version}.browser.min.js` },
+  { from: `dist/run.node.min.js`, to: `dist/run.${pkg.version}.node.min.js` },
+  { from: `dist/run.browser.js`, to: `dist/run.${pkg.version}.browser.js` },
+  { from: `dist/run.node.js`, to: `dist/run.${pkg.version}.node.js` },
+]
+
+function copyFileWithRetry(sourcePath, destinationPath) {
+  fs.copyFile(sourcePath, destinationPath, (err) => {
+    if (err) {
+      console.error(`Error copying file from ${sourcePath} to ${destinationPath}:`, err)
+      console.log("will retry in", retryAfterSeconds, "seconds")
+      setTimeout(() => {
+        copyFileWithRetry(sourcePath, destinationPath)
+      }, retryAfterSeconds * 1000)
+    } else {
+      console.log(`File copied from ${sourcePath} to ${destinationPath}`)
+    }
+  })
+}
+
+function copyFiles() {
+  copyPatterns.forEach(pattern => {
+    const sourcePath = path.resolve(pattern.from)
+    const destinationPath = path.resolve(pattern.to)
+    copyFileWithRetry(sourcePath, destinationPath)
+  })
+}
+
+class DelayAfterBuildPlugin {
+  apply(compiler) {
+    compiler.hooks.done.tapAsync('DelayAfterBuildPlugin', (stats, callback) => {
+      console.log('Build finished, delaying post-build operations...')
+      setTimeout(() => {
+        console.log(`Waited ${retryAfterSeconds} seconds`)
+        copyFiles()
+      }, retryAfterSeconds * 1000)
+    });
+  }
+}
+
+module.exports = [browserMin, nodeMin, browser, node, browserTests, {
+  plugins: [
+    new DelayAfterBuildPlugin()
+  ],
+}]

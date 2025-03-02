@@ -43,7 +43,7 @@ describe('Inventory', () => {
 
     it('does not add unowned jigs', () => {
       const run = new Run()
-      class A extends Jig { init (owner) { this.owner = owner } }
+      class A extends Jig { init(owner) { this.owner = owner } }
       new A(new PrivateKey().publicKey.toString()) // eslint-disable-line
       expect(run.inventory.jigs.length).to.equal(0)
       expect(run.inventory.code.length).to.equal(1)
@@ -53,10 +53,10 @@ describe('Inventory', () => {
 
     it('does not add unowned jigs with locks', async () => {
       const run = new Run()
-      class A extends Jig { init (owner) { this.owner = owner } }
+      class A extends Jig { init(owner) { this.owner = owner } }
       class CustomLock {
-        script () { return '' }
-        domain () { return 0 }
+        script() { return '' }
+        domain() { return 0 }
       }
       await run.deploy(CustomLock).sync()
       new A(new CustomLock()) // eslint-disable-line
@@ -68,7 +68,7 @@ describe('Inventory', () => {
 
     it('removes jigs sent away', async () => {
       const run = new Run()
-      class A extends Jig { send (to) { this.owner = to } }
+      class A extends Jig { send(to) { this.owner = to } }
       const a = new A()
       await a.sync()
       expect(run.inventory.jigs.length).to.equal(1)
@@ -81,7 +81,7 @@ describe('Inventory', () => {
 
     it('add unsynced jigs', () => {
       const run = new Run()
-      class A extends Jig { send (to) { this.owner = to } }
+      class A extends Jig { send(to) { this.owner = to } }
       new A() // eslint-disable-line
       expect(run.inventory.jigs.length).to.equal(1)
       expect(run.inventory.code.length).to.equal(1)
@@ -91,7 +91,7 @@ describe('Inventory', () => {
 
     it('removes if fail to post', async () => {
       const run = new Run()
-      class A extends Jig { send (to) { this.owner = to } }
+      class A extends Jig { send(to) { this.owner = to } }
       const a = new A()
       stub(run.purse, 'pay').throws()
       await expect(a.sync()).to.be.rejected
@@ -120,7 +120,7 @@ describe('Inventory', () => {
 
     it('removes unowned jigs', async () => {
       const run = new Run()
-      class A extends Jig { send (to) { this.owner = to } }
+      class A extends Jig { send(to) { this.owner = to } }
       const a = new A()
       await a.sync()
       const run2 = new Run({ owner: run.owner })
@@ -136,7 +136,7 @@ describe('Inventory', () => {
 
     it('replaces with newer jig', async () => {
       const run = new Run()
-      class A extends Jig { f () { this.n = 1 } }
+      class A extends Jig { f() { this.n = 1 } }
       const a = new A()
       await a.sync()
       const run2 = new Run({ owner: run.owner })
@@ -309,7 +309,7 @@ describe('Inventory', () => {
 
     it('sync send does not add', async () => {
       const run = new Run()
-      class A extends Jig { send (to) { this.owner = to } }
+      class A extends Jig { send(to) { this.owner = to } }
       const a = new A()
       a.send(new PrivateKey().publicKey.toString())
       await a.sync()
@@ -328,7 +328,7 @@ describe('Inventory', () => {
       const run = new Run()
       const run2 = new Run()
       run.activate()
-      class A extends Jig { send (to) { this.owner = to } }
+      class A extends Jig { send(to) { this.owner = to } }
       const a = new A()
       a.send(run2.owner.address)
       await a.sync()
@@ -407,7 +407,7 @@ describe('Inventory', () => {
 
     it('send in transaction', async () => {
       const run = new Run()
-      class A extends Jig { send (to) { this.owner = to } }
+      class A extends Jig { send(to) { this.owner = to } }
       const a = new A()
       await run.sync()
       await run.inventory.sync()
@@ -424,7 +424,7 @@ describe('Inventory', () => {
 
     it('receive in transaction', async () => {
       const run = new Run()
-      class A extends Jig { send (to) { this.owner = to } }
+      class A extends Jig { send(to) { this.owner = to } }
       const a = new A()
       await run.sync()
       const run2 = new Run()
@@ -441,7 +441,7 @@ describe('Inventory', () => {
 
     it('send after switch run instances', async () => {
       const run = new Run()
-      class A extends Jig { send (to) { this.owner = to } }
+      class A extends Jig { send(to) { this.owner = to } }
       const a = new A()
       await run.sync()
       const run2 = new Run()
@@ -463,8 +463,8 @@ describe('Inventory', () => {
 
     it('supports non-async nextOwner', async () => {
       const owner = {
-        nextOwner () { return new PrivateKey().toAddress().toString() },
-        async sign () { }
+        nextOwner() { return new PrivateKey().toAddress().toString() },
+        async sign() { }
       }
       const run = new Run({ owner })
       await run.inventory.sync()
@@ -474,8 +474,8 @@ describe('Inventory', () => {
 
     it('throws if nextOwner fails', async () => {
       const owner = {
-        async nextOwner () { throw new Error('bad owner') },
-        async sign (rawtx) { return rawtx }
+        async nextOwner() { throw new Error('bad owner') },
+        async sign(rawtx) { return rawtx }
       }
       const run = new Run({ owner })
       await expect(run.inventory.sync()).to.be.rejectedWith('bad owner')
@@ -491,8 +491,8 @@ describe('Inventory', () => {
 
     it('throws if nextOwner function doesnt exist', async () => {
       const owner = {
-        async owner () { return new PrivateKey().toAddress().toString() },
-        async sign () { }
+        async owner() { return new PrivateKey().toAddress().toString() },
+        async sign() { }
       }
       const run = new Run({ owner })
       await expect(run.inventory.sync()).to.be.rejectedWith('Inventory cannot determine owner')
